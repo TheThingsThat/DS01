@@ -29,18 +29,22 @@ public class MyLL<T> {
     }
 
     public boolean add(int index, T data) {
-        if (index > size - 1) {
+        if (index < 0 || index > size) {
             return false;
         }
         Node<T> newNode =  new Node<>(data);
-        Node<T> previousNode = head;
 
-        for (int i = 0; i < index; i++) {
-            previousNode = previousNode.next;
+        if (index == 0) {
+            newNode.next = head;
+            head = newNode;
+        }else {
+            Node <T> previousNode = head;
+            for (int i = 0; i < index - 1; i++) {
+                previousNode = previousNode.next;
+            }
+            newNode.next = previousNode.next;
+            previousNode.next = newNode;
         }
-
-        newNode.next = previousNode.next;
-        previousNode.next = newNode;
         size++;
         return true;
     }
@@ -84,10 +88,8 @@ public class MyLL<T> {
 
     public boolean remove(Object data) {
         boolean found = false;
-        for (int i = 0; i < size; i++) {
-            if (removeFirstOccurrence(data)) {
-                found = true;
-            }
+        while (removeFirstOccurrence(data)) {
+            found = true;
         }
         return found;
     }
@@ -111,11 +113,11 @@ public class MyLL<T> {
                 if (currNode == tail) {
                     tail = prevNode;
                 }
-
-                currNode.next = null;
                 size--;
                 return true;
             }
+            prevNode = currNode;
+            currNode = currNode.next;
         }
         return false;
     }
@@ -148,7 +150,11 @@ public class MyLL<T> {
         }else {
             lastPrevNode.next = lastCurrNode.next;
         }
-        lastCurrNode.next = null;
+
+        if (lastCurrNode == tail){
+            tail = lastPrevNode;
+        }
+
         size--;
         return true;
     }
